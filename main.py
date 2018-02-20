@@ -1,4 +1,5 @@
-import random, os
+import random
+import os
 
 
 def clear():
@@ -25,6 +26,23 @@ class Deck(object):
         return self.cards.pop()
 
 
+class Card(object):
+    u_suits = {"h": "a", "d": "c", "c": "d", "s": "a"}
+    u_numbers = {"a": "1", "2": "2", "3": "3", "4": "4",
+                 "5": "5", "6": "6", "7": "7", "8": "8",
+                 "9": "9", "10": "a", "j": "b", "q": "d", "k": "e"}
+
+    def __init__(self,number,suit,value):
+        self.number = suit
+        self.suit = suit
+        self.value = value
+
+    def __str__(self):
+        # https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
+        # example u'\U0001f0d1'
+        return u'\' + U0001f0' + Card.u_suit[self.suit] + Card.u_numbers[self.number]
+
+
 class Person(object):
     def __init__(self, name):
         self.name = name
@@ -39,6 +57,8 @@ class Person(object):
 
     def add_card(self, card):
         self.cards.append(card)
+
+
 
     def count(self):
         res = 0
