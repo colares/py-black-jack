@@ -22,13 +22,20 @@ class Deck(object):
         random.shuffle(self.cards)
 
     def get_card(self):
-        return self.cards.pop();
+        return self.cards.pop()
 
 
-class Hand(object):
-
-    def __init__(self):
+class Person(object):
+    def __init__(self, name):
+        self.name = name
         self.cards = []
+
+    def __str__(self):
+        return "I'm person %s" % self.name
+
+    def __repr__(self):
+        # used by print(list(l))
+        return "I'm person %s" % self.name
 
     def add_card(self, card):
         self.cards.append(card)
@@ -56,18 +63,33 @@ class Hand(object):
         return self.count() > 21
 
 
-class Player(object):
+class Player(Person):
 
     def __init__(self, name):
-        self.name = name
-        self.hand = Hand()
+        Person.__init__(self, name)
 
     def __str__(self):
-        return "Player: %s" % self.name
+        return "Player %s" % self.name
 
     def __repr__(self):
         # used by print(list(l))
-        return "Player: %s" % self.name
+        return "Player %s" % self.name
+
+
+class Dealer(Person):
+
+    def __init__(self, name):
+        Person.__init__(self, name)
+
+    def __str__(self):
+        return "Dealer %s" % self.name
+
+    def __repr__(self):
+        # used by print(list(l))
+        return "Dealer %s" % self.name
+
+
+
 
 
 def menu():
@@ -92,11 +114,11 @@ def main(num_players):
 
     for turn in range(0,2):
         for p in players:
-            p.hand.add_card(deck.get_card())
+            p.add_card(deck.get_card())
 
     for p in players:
         print(p)
-        print(p.hand.cards)
+        print(p.cards)
         print("")
 
     # while True:
