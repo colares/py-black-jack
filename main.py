@@ -57,7 +57,18 @@ class Player(object):
     def __init__(self):
         self.hand = Hand()
 
+def main():
+    while True:
+        try:
+            value = int(input("How many players? 1 to 5"))
+        except:
+            print("Ops! This is not a valid number of players. Try it again")
+            continue
+        else:
+            break
+    print("The integer",value)
 
+main()
 
 deck = Deck()
 p = Player()
