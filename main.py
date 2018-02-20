@@ -7,20 +7,9 @@ def clear():
 
 
 class Deck(object):
-
-    def __init__(self):
+    def __init__(self, cards):
         # hearts, diamonds, clubs, spades
-        self.cards = [
-            ('a', 'h', 1), ('2', 'h', 2), ('3', 'h', 3), ('4', 'h', 4), ('5', 'h', 5), ('6', 'h', 6), ('7', 'h', 7),
-            ('8', 'h', 8), ('9', 'h', 9), ('10', 'h', 10), ('j', 'h', 10), ('q', 'h', 10), ('k', 'h', 10),
-            ('a', 'd', 1), ('2', 'd', 2), ('3', 'd', 3), ('4', 'd', 4), ('5', 'd', 5), ('6', 'd', 6), ('7', 'd', 7),
-            ('8', 'd', 8), ('9', 'd', 9), ('10', 'd', 10), ('j', 'd', 10), ('q', 'd', 10), ('k', 'd', 10),
-            ('a', 'c', 1), ('2', 'c', 2), ('3', 'c', 3), ('4', 'c', 4), ('5', 'c', 5), ('6', 'c', 6), ('7', 'c', 7),
-            ('8', 'c', 8), ('9', 'c', 9), ('10', 'c', 10), ('j', 'c', 10), ('q', 'c', 10), ('k', 'c', 10),
-            ('a', 's', 1), ('2', 's', 2), ('3', 's', 3), ('4', 's', 4), ('5', 's', 5), ('6', 's', 6), ('7', 's', 7),
-            ('8', 's', 8), ('9', 's', 9), ('10', 's', 10), ('j', 's', 10), ('q', 's', 10), ('k', 's', 10)
-        ]
-        random.shuffle(self.cards)
+        self.cards = cards
 
     def get_card(self):
         return self.cards.pop()
@@ -33,14 +22,14 @@ class Card(object):
                  "9": "9", "10": "a", "j": "b", "q": "d", "k": "e"}
 
     def __init__(self,number,suit,value):
-        self.number = suit
+        self.number = number
         self.suit = suit
         self.value = value
 
     def __str__(self):
         # https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
         # example u'\U0001f0d1'
-        return u'\' + U0001f0' + Card.u_suit[self.suit] + Card.u_numbers[self.number]
+        return u'\' + U0001f0' + Card.u_suits[self.suit] + Card.u_numbers[self.number]
 
 
 class Person(object):
@@ -129,7 +118,16 @@ def menu():
 
 
 def main(num_players):
-    deck = Deck()
+    deck = Deck([Card(n, s, v) for n, s, v in [
+            ('a', 'h', 1), ('2', 'h', 2), ('3', 'h', 3), ('4', 'h', 4), ('5', 'h', 5), ('6', 'h', 6), ('7', 'h', 7),
+            ('8', 'h', 8), ('9', 'h', 9), ('10', 'h', 10), ('j', 'h', 10), ('q', 'h', 10), ('k', 'h', 10),
+            ('a', 'd', 1), ('2', 'd', 2), ('3', 'd', 3), ('4', 'd', 4), ('5', 'd', 5), ('6', 'd', 6), ('7', 'd', 7),
+            ('8', 'd', 8), ('9', 'd', 9), ('10', 'd', 10), ('j', 'd', 10), ('q', 'd', 10), ('k', 'd', 10),
+            ('a', 'c', 1), ('2', 'c', 2), ('3', 'c', 3), ('4', 'c', 4), ('5', 'c', 5), ('6', 'c', 6), ('7', 'c', 7),
+            ('8', 'c', 8), ('9', 'c', 9), ('10', 'c', 10), ('j', 'c', 10), ('q', 'c', 10), ('k', 'c', 10),
+            ('a', 's', 1), ('2', 's', 2), ('3', 's', 3), ('4', 's', 4), ('5', 's', 5), ('6', 's', 6), ('7', 's', 7),
+            ('8', 's', 8), ('9', 's', 9), ('10', 's', 10), ('j', 's', 10), ('q', 's', 10), ('k', 's', 10)
+        ]])
     players = [Player(i) for i in range(0, num_players)]
 
     for turn in range(0,2):
