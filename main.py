@@ -16,10 +16,63 @@ class Deck(object):
 
 
 class Card(object):
-    u_suits = {"h": "a", "d": "c", "c": "d", "s": "a"}
-    u_numbers = {"a": "1", "2": "2", "3": "3", "4": "4",
-                 "5": "5", "6": "6", "7": "7", "8": "8",
-                 "9": "9", "10": "a", "j": "b", "q": "d", "k": "e"}
+    # https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
+    # example u'\U0001f0d1'
+    icons = {
+        'na': '\U0001f0a0',
+        'sa': '\U0001f0a1',
+        's2': '\U0001f0a2',
+        's3': '\U0001f0a3',
+        's4': '\U0001f0a4',
+        's5': '\U0001f0a5',
+        's6': '\U0001f0a6',
+        's7': '\U0001f0a7',
+        's8': '\U0001f0a8',
+        's9': '\U0001f0a9',
+        's10': '\U0001f0aa',
+        'sj': '\U0001f0ab',
+        'sq': '\U0001f0ad',
+        'sk': '\U0001f0ae',
+        'ha': '\U0001f0b1',
+        'h2': '\U0001f0b2',
+        'h3': '\U0001f0b3',
+        'h4': '\U0001f0b4',
+        'h5': '\U0001f0b5',
+        'h6': '\U0001f0b6',
+        'h7': '\U0001f0b7',
+        'h8': '\U0001f0b8',
+        'h9': '\U0001f0b9',
+        'h10': '\U0001f0ba',
+        'hj': '\U0001f0bb',
+        'hq': '\U0001f0bd',
+        'hk': '\U0001f0be',
+        'da': '\U0001f0c1',
+        'd2': '\U0001f0c2',
+        'd3': '\U0001f0c3',
+        'd4': '\U0001f0c4',
+        'd5': '\U0001f0c5',
+        'd6': '\U0001f0c6',
+        'd7': '\U0001f0c7',
+        'd8': '\U0001f0c8',
+        'd9': '\U0001f0c9',
+        'd10': '\U0001f0ca',
+        'dj': '\U0001f0cb',
+        'dq': '\U0001f0cd',
+        'dk': '\U0001f0ce',
+        'ca': '\U0001f0d1',
+        'c2': '\U0001f0d2',
+        'c3': '\U0001f0d3',
+        'c4': '\U0001f0d4',
+        'c5': '\U0001f0d5',
+        'c6': '\U0001f0d6',
+        'c7': '\U0001f0d7',
+        'c8': '\U0001f0d8',
+        'c9': '\U0001f0d9',
+        'c10': '\U0001f0da',
+        'cj': '\U0001f0db',
+        'cq': '\U0001f0dd',
+        'ck': '\U0001f0de'
+    }
 
     def __init__(self,number,suit,value):
         self.number = number
@@ -27,9 +80,10 @@ class Card(object):
         self.value = value
 
     def __str__(self):
-        # https://en.wikipedia.org/wiki/Playing_cards_in_Unicode
-        # example u'\U0001f0d1'
-        return u'\' + U0001f0' + Card.u_suits[self.suit] + Card.u_numbers[self.number]
+        return Card.icons[self.suit + self.number]
+
+    def __repr__(self):
+        return Card.icons[self.suit + self.number]
 
 
 class Person(object):
@@ -47,6 +101,9 @@ class Person(object):
     def add_card(self, card):
         self.cards.append(card)
 
+    def show_cards(self):
+        for c in self.cards:
+            print(c, end="")
 
 
     def count(self):
@@ -97,6 +154,10 @@ class Dealer(Person):
         # used by print(list(l))
         return "Dealer %s" % self.name
 
+    def show_cards(self):
+        print(self.cards[0], end="")
+        print(Card.icons['na'], end="")
+
 
 
 
@@ -117,7 +178,7 @@ def menu():
     return num_players
 
 
-def main(num_players):
+def setup(num_players):
     deck = Deck([Card(n, s, v) for n, s, v in [
             ('a', 'h', 1), ('2', 'h', 2), ('3', 'h', 3), ('4', 'h', 4), ('5', 'h', 5), ('6', 'h', 6), ('7', 'h', 7),
             ('8', 'h', 8), ('9', 'h', 9), ('10', 'h', 10), ('j', 'h', 10), ('q', 'h', 10), ('k', 'h', 10),
@@ -128,16 +189,18 @@ def main(num_players):
             ('a', 's', 1), ('2', 's', 2), ('3', 's', 3), ('4', 's', 4), ('5', 's', 5), ('6', 's', 6), ('7', 's', 7),
             ('8', 's', 8), ('9', 's', 9), ('10', 's', 10), ('j', 's', 10), ('q', 's', 10), ('k', 's', 10)
         ]])
-    players = [Player(i) for i in range(0, num_players)]
+    random.shuffle(deck.cards)
+    players = [Dealer('1')] + [Player(i) for i in range(0, num_players)]
 
     for turn in range(0,2):
         for p in players:
             p.add_card(deck.get_card())
+    return players
 
+def play(players):
     for p in players:
-        print(p)
-        print(p.cards)
-        print("")
+        print(p, end=": ")
+        print(p.show_cards())
 
     # while True:
     #     try:
@@ -150,4 +213,5 @@ def main(num_players):
 
 
 num_players = menu()
-main(num_players)
+players = setup(num_players)
+play(players)
