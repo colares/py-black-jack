@@ -105,7 +105,6 @@ class Person(object):
         for c in self.cards:
             print(c, end="")
 
-
     def count(self):
         res = 0
         ace = False
@@ -159,9 +158,6 @@ class Dealer(Person):
         print(Card.icons['na'], end="")
 
 
-
-
-
 def menu():
     while True:
         try:
@@ -197,6 +193,7 @@ def setup(num_players):
             p.add_card(deck.get_card())
     return players
 
+
 def play(players):
     for p in players:
         print(p, end=": ")
@@ -212,6 +209,9 @@ def play(players):
     #         break
 
 
+"""
+Main
+"""
 num_players = menu()
 players = setup(num_players)
 play(players)
