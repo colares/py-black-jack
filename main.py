@@ -109,10 +109,10 @@ class Person(object):
         res = 0
         ace = False
         for c in self.cards:
-            if c[0] == 'a':
+            if c.number == 'a':
                 ace = True
                 continue
-            res += c[2]
+            res += c.value
         if not ace:
             return res
         if res + 11 > 21:
@@ -153,7 +153,7 @@ class Dealer(Person):
         # used by print(list(l))
         return "Dealer %s" % self.name
 
-    def show_cards(self):
+    def show_cards(self,reveal=False):
         print(self.cards[0], end="")
         print(Card.icons['na'], end="")
 
@@ -174,7 +174,7 @@ def menu():
     return num_players
 
 
-def setup(num_players):
+def setup_deck():
     deck = Deck([Card(n, s, v) for n, s, v in [
             ('a', 'h', 1), ('2', 'h', 2), ('3', 'h', 3), ('4', 'h', 4), ('5', 'h', 5), ('6', 'h', 6), ('7', 'h', 7),
             ('8', 'h', 8), ('9', 'h', 9), ('10', 'h', 10), ('j', 'h', 10), ('q', 'h', 10), ('k', 'h', 10),
@@ -186,6 +186,10 @@ def setup(num_players):
             ('8', 's', 8), ('9', 's', 9), ('10', 's', 10), ('j', 's', 10), ('q', 's', 10), ('k', 's', 10)
         ]])
     random.shuffle(deck.cards)
+
+    return deck
+
+def setup_players(deck, num_players):
     players = [Dealer('1')] + [Player(i) for i in range(0, num_players)]
 
     for turn in range(0,2):
@@ -194,24 +198,49 @@ def setup(num_players):
     return players
 
 
-def play(players):
-    for p in players:
-        print(p, end=": ")
-        print(p.show_cards())
+def play(deck, players):
+    while True:
+        for player_round in players:
+            if player_round.__class__.__name__ == Dealer.__name__:
+                continue
 
-    # while True:
-    #     try:
-    #         num_players = int(input("How many players? 1 to 5: "))
-    #     except:
-    #         print("Ops! This is not a valid number of players. Try it again. ")
-    #         continue
-    #     else:
-    #         break
+            while True:
+                clear()
+                for p in players:
+                    print(p, end=": ")
+                    print(p.show_cards())
+
+                if player_round.bust():
+                    print(player_round.name, ' is out!')
+                    break
+
+                if player_round.black_jack():
+                    print(player_round.name, ' wins!')
+                    break
+
+                try:
+                    print('Player ', player_round.name)
+                    option = int(input("1 - Hit   2 - Stand: "))
+                except:
+                    print("Ops! This is not a valid number of players. Try it again. ")
+                    continue
+
+                if option == 2:
+                    break
+
+                if option == 1:
+                    player_round.add_card(deck.get_card())
+
+
+            break
+        break
+
 
 
 """
 Main
 """
 num_players = menu()
-players = setup(num_players)
-play(players)
+deck = setup_deck()
+players = setup_players(deck, num_players)
+play(deck, players)
