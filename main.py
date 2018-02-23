@@ -121,12 +121,6 @@ class Person(object):
         res += 11
         return res
 
-    def black_jack(self):
-        return self.count() == 21
-
-    def bust(self):
-        return self.count() > 21
-
 
 class Player(Person):
 
@@ -176,6 +170,11 @@ class Table(object):
                 print(' --> is out!', end="")
             print("")
 
+    def black_jack(self, player):
+        return player.count() == 21
+
+    def bust(self, player):
+        return player.count() > 21
 
 def menu():
     while True:
@@ -220,10 +219,10 @@ def play(table):
                 clear()
                 table.print_board()
 
-                if player_round.bust():
+                if table.bust(player_round):
                     break
 
-                if player_round.black_jack():
+                if table.black_jack(player_round):
                     break
 
                 try:
