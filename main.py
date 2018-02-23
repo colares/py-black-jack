@@ -158,6 +158,25 @@ class Dealer(Person):
         print(Card.icons['na'], end="")
 
 
+class Table(object):
+    def __init__(self, deck, num_players):
+        self.num_players = num_players
+        self.deck = deck
+        self.players = [Dealer('1')] + [Player(i) for i in range(0, num_players)]
+
+        for turn in range(0,2):
+            for p in self.players:
+                p.add_card(deck.get_card())
+
+    def print_board(self):
+        for p in self.players:
+            print(p, end=": ")
+            p.show_cards()
+            if p.bust():
+                print(' --> is out!', end="")
+            print("")
+
+
 def menu():
     while True:
         try:
@@ -189,33 +208,22 @@ def setup_deck():
 
     return deck
 
-def setup_players(deck, num_players):
-    players = [Dealer('1')] + [Player(i) for i in range(0, num_players)]
-
-    for turn in range(0,2):
-        for p in players:
-            p.add_card(deck.get_card())
-    return players
 
 
-def play(deck, players):
+def play(table):
     while True:
-        for player_round in players:
+        for player_round in table.players:
             if player_round.__class__.__name__ == Dealer.__name__:
                 continue
 
             while True:
                 clear()
-                for p in players:
-                    print(p, end=": ")
-                    print(p.show_cards())
+                table.print_board()
 
                 if player_round.bust():
-                    print(player_round.name, ' is out!')
                     break
 
                 if player_round.black_jack():
-                    print(player_round.name, ' wins!')
                     break
 
                 try:
@@ -226,15 +234,13 @@ def play(deck, players):
                     continue
 
                 if option == 2:
+                    print(option,'oxe')
                     break
 
                 if option == 1:
                     player_round.add_card(deck.get_card())
 
-
-            break
         break
-
 
 
 """
@@ -242,5 +248,5 @@ Main
 """
 num_players = menu()
 deck = setup_deck()
-players = setup_players(deck, num_players)
-play(deck, players)
+table = Table(deck, num_players)
+play(table)
