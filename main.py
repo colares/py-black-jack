@@ -87,8 +87,9 @@ class Card(object):
 
 
 class Person(object):
-    def __init__(self, name):
+    def __init__(self, name, balance):
         self.name = name
+        self.balance = balance
         self.cards = []
 
     def __str__(self):
@@ -124,8 +125,8 @@ class Person(object):
 
 class Player(Person):
 
-    def __init__(self, name):
-        Person.__init__(self, name)
+    def __init__(self, name, balance):
+        Person.__init__(self, name, balance)
 
     def __str__(self):
         return "Player %s" % self.name
@@ -138,7 +139,7 @@ class Player(Person):
 class Dealer(Person):
 
     def __init__(self, name):
-        Person.__init__(self, name)
+        Person.__init__(self, name, 10000000) # it's a casino :)
 
     def __str__(self):
         return "Dealer %s" % self.name
@@ -153,24 +154,25 @@ class Dealer(Person):
 
 
 class Table(object):
-    def __init__(self, deck, num_players):
-        self.num_players = num_players
+    def __init__(self, deck, players):
         self.deck = deck
         self.dealer = Dealer('1')
-        self.players = [Player(i) for i in range(0, num_players-1)]
+        self.players = players
 
     def distribute_cards(self):
         for i in range(0,2):
-            self.dealer.add_card(deck.get_card())
-            for p in self.players:
+            for p in [self.dealer] + self.players: # todo use lambda
                 p.add_card(deck.get_card())
 
+    def flush_cards(self):
+        self.dealer.cards = []
+        for p in self.players: # todo use lambda
+            p.cards = []
+
     def print_board(self):
-        for p in self.players:
-            print(p, end=": ")
+        for p in [self.dealer] + self.players:
+            print(p, "balance: ",p.balance, end=": ")
             p.show_cards()
-            if self.bust(p):
-                print(' --> is out!', end="")
             print("")
 
     def black_jack(self, player):
@@ -180,7 +182,7 @@ class Table(object):
         return player.count() > 21
 
 
-def menu():
+def num_players_setup():
     while True:
         try:
             num_players = int(input("How many players? 1 to 5: "))
@@ -192,11 +194,25 @@ def menu():
 
     clear()
     print(num_players, 'players.')
-    print("Let's play!")
     return num_players
 
 
-def setup_deck():
+def players_setup(num_players):
+    players = []
+    for p in range(0,num_players):
+        while True:
+            try:
+                balance = float(input("Set player " + str(p) + " wallet balance:"))
+                players.append(Player(str(p), balance))
+            except:
+                print("Ops! This is not a valid wallet balance. Try it again. ")
+                continue
+            else:
+                break
+    return players
+
+
+def deck_setup():
     deck = Deck([Card(n, s, v) for n, s, v in [
             ('a', 'h', 1), ('2', 'h', 2), ('3', 'h', 3), ('4', 'h', 4), ('5', 'h', 5), ('6', 'h', 6), ('7', 'h', 7),
             ('8', 'h', 8), ('9', 'h', 9), ('10', 'h', 10), ('j', 'h', 10), ('q', 'h', 10), ('k', 'h', 10),
@@ -214,19 +230,43 @@ def setup_deck():
 
 
 def play(table):
-    while True:
-        for player_round in table.players:
-            if player_round.__class__.__name__ == Dealer.__name__:
-                continue
+    """
+    novo jogo
+    - dealer distribui as cartas
+    - dealer tem black jack?
+    -- fim da mão
+    - para cada jogador:
+    --- enquanto não parar ou bust
+    ---- quer continuar ou parar?
+    - dealer revela as cartas
+    -- quem ganhou (count > dealer), ganha a apost
+    -- quem perdeu (count <= dealer), perde a aposta
+    - limpa o jogo
 
+    :param table:
+    :return:
+    """
+    while True:
+        table.flush_cards()
+        table.distribute_cards()
+        clear()
+        table.print_board()
+        if table.black_jack(table.dealer):
+            print("dealer has black jack. hand is over")
+
+            continue
+
+        for player_round in table.players:
             while True:
                 clear()
                 table.print_board()
 
                 if table.bust(player_round):
+                    print("player", player_round.name,"bust")
                     break
 
                 if table.black_jack(player_round):
+                    print("player", player_round.name, "blackjack")
                     break
 
                 try:
@@ -237,11 +277,12 @@ def play(table):
                     continue
 
                 if option == 2:
-                    print(option,'oxe')
+                    print(option,'stand!')
                     break
 
                 if option == 1:
                     player_round.add_card(deck.get_card())
+
 
         break
 
@@ -249,8 +290,17 @@ def play(table):
 """
 Main
 """
-num_players = menu()
-deck = setup_deck()
-table = Table(deck, num_players)
-table.distribute_cards()
+"""
+Regras pra implementar:
+Se o dealer tem o black jack. Hand is over
+Bust --> perde todo o dinheiro para o dealer
+Quem tiver black jack, ganha o mesmo amount  de volta do dealer
+https://www.youtube.com/watch?v=idB-7FUaC-g
+
+"""
+
+deck = deck_setup()
+num_players = num_players_setup()
+players = players_setup(num_players)
+table = Table(deck, players)
 play(table)
