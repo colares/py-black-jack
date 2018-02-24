@@ -156,9 +156,12 @@ class Table(object):
     def __init__(self, deck, num_players):
         self.num_players = num_players
         self.deck = deck
-        self.players = [Dealer('1')] + [Player(i) for i in range(0, num_players)]
+        self.dealer = Dealer('1')
+        self.players = [Player(i) for i in range(0, num_players-1)]
 
-        for turn in range(0,2):
+    def distribute_cards(self):
+        for i in range(0,2):
+            self.dealer.add_card(deck.get_card())
             for p in self.players:
                 p.add_card(deck.get_card())
 
@@ -166,7 +169,7 @@ class Table(object):
         for p in self.players:
             print(p, end=": ")
             p.show_cards()
-            if p.bust():
+            if self.bust(p):
                 print(' --> is out!', end="")
             print("")
 
@@ -175,6 +178,7 @@ class Table(object):
 
     def bust(self, player):
         return player.count() > 21
+
 
 def menu():
     while True:
@@ -248,4 +252,5 @@ Main
 num_players = menu()
 deck = setup_deck()
 table = Table(deck, num_players)
+table.distribute_cards()
 play(table)
