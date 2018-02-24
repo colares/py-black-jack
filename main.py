@@ -310,10 +310,10 @@ def play(table):
                     player_round.add_card(deck.get_card())
 
         res = None
-        while res not in ["a","q"]:
-            res = input("Play (a)gain or (q)uit?:").lower()
+        while res not in ["y","n"]:
+            res = input("Play again? [y/N]:").lower() or 'n'
 
-        if res == "q":
+        if res == "n":
             print("See you soon, raccoon! :)")
             break
         continue
