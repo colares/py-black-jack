@@ -271,6 +271,7 @@ def play(table):
                     continue
                 else:
                     break
+
         table.flush_cards()
         table.distribute_cards()
         clear()
@@ -282,7 +283,7 @@ def play(table):
 
         for player_round in table.players:
             while True:
-                #clear()
+                clear()
                 table.print_board()
 
                 if table.bust(player_round):
@@ -307,8 +308,14 @@ def play(table):
                 if option == 1:
                     player_round.add_card(deck.get_card())
 
+        res = None
+        while res not in ["a","q"]:
+            res = input("Play (a)gain or (q)uit?:").lower()
 
-        break
+        if res == "q":
+            print("See you soon, raccoon! :)")
+            break
+        continue
 
 
 """
