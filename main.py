@@ -158,6 +158,7 @@ class Table(object):
         self.deck = deck
         self.dealer = Dealer('1')
         self.players = players
+        self.bets = {}
 
     def distribute_cards(self):
         for i in range(0,2):
@@ -169,9 +170,15 @@ class Table(object):
         for p in self.players: # todo use lambda
             p.cards = []
 
+    def flush_bets(self):
+        self.bets = {}
+
     def print_board(self):
-        for p in [self.dealer] + self.players:
-            print(p, "balance: ",p.balance, end=": ")
+        print(self.dealer, end=": ")
+        self.dealer.show_cards()
+        print("")
+        for p in self.players:
+            print(p, "balance: ",p.balance, "bet", self.bets[id(p)], end=": ")
             p.show_cards()
             print("")
 
@@ -180,6 +187,8 @@ class Table(object):
 
     def bust(self, player):
         return player.count() > 21
+
+
 
 
 def num_players_setup():
@@ -229,6 +238,8 @@ def deck_setup():
 
 
 
+
+
 def play(table):
     """
     novo jogo
@@ -247,6 +258,19 @@ def play(table):
     :return:
     """
     while True:
+        # bets
+
+        table.flush_bets()
+        for p in table.players:
+            while True:
+                try:
+                    bet = float(input("Set your bet (max " + str(p.balance) + "):"))
+                    table.bets[id(p)] = bet
+                except:
+                    print("Ops! This is not a valid bet. Try it again. ")
+                    continue
+                else:
+                    break
         table.flush_cards()
         table.distribute_cards()
         clear()
@@ -258,7 +282,7 @@ def play(table):
 
         for player_round in table.players:
             while True:
-                clear()
+                #clear()
                 table.print_board()
 
                 if table.bust(player_round):
