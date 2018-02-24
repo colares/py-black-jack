@@ -178,7 +178,7 @@ class Table(object):
         self.dealer.show_cards()
         print("")
         for p in self.players:
-            print(p, "Balance: ",str(p.balance).rjust(8), ", Bet", str(self.bets[id(p)]).rjust(8), end=": ")
+            print(p, "| Balance: ",str(p.balance).rjust(8), "| Bet", str(self.bets[id(p)]).rjust(8),"| ", [str(p.count()).rjust(3)], end=" ")
             p.show_cards()
             print("")
 
