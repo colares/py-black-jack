@@ -178,7 +178,7 @@ class Table(object):
         self.dealer.show_cards()
         print("")
         for p in self.players:
-            print(p, "balance: ",p.balance, "bet", self.bets[id(p)], end=": ")
+            print(p, "Balance: ",str(p.balance).rjust(8), ", Bet", str(self.bets[id(p)]).rjust(8), end=": ")
             p.show_cards()
             print("")
 
@@ -211,8 +211,9 @@ def players_setup(num_players):
     for p in range(0,num_players):
         while True:
             try:
-                balance = float(input("Set player " + str(p) + " wallet balance:"))
-                players.append(Player(str(p), balance))
+                name = str(p+1)
+                balance = float(input("Set player " + name + " wallet balance:"))
+                players.append(Player(name, balance))
             except:
                 print("Ops! This is not a valid wallet balance. Try it again. ")
                 continue
