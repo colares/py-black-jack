@@ -1,7 +1,7 @@
 # Simple one-python-file Black Jack!
 A command line black jack for n-RAM-limited human-being players and an "intelligent" computer dealer.
 
-![Gameplay](py-tic-tac-toe-show-off.png)
+![Overview](img/game-play-04.png)
 
 ## Who was the game made for?
 * For you, tired of playing Tic Tac Toe \m/
@@ -53,6 +53,10 @@ Hand overview:
 ![Overview](img/game-play-06.png)
 
 ![Overview](img/game-play-07.png)
+
+### 3 Are you done?
+
+![Overview](img/game-play-08.png)
 
 ## Learn how to play Black Jack, the simple way
 https://www.youtube.com/watch?v=idB-7FUaC-g
