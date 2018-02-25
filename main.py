@@ -208,7 +208,7 @@ class Table(object):
         self.dealer.balance -= self.bets[id(player)]
         player.balance += self.bets[id(player)]
 
-    def loose(self, player):
+    def lose(self, player):
         self.dealer.balance += self.bets[id(player)]
         player.balance -= self.bets[id(player)]
 
@@ -337,14 +337,14 @@ def play(table):
         make_bets(table)
         table.flush_cards()
         table.distribute_cards()
-        # if check_dealer_black_jack(table):
 
-        for p in table.players:
-            play_turn(table,p)
-        dealer_play_turn(table)
+        if not table.is_black_jack(table.dealer):
+            for p in table.players:
+                play_turn(table, p)
+            dealer_play_turn(table)
 
-        clear()
-        table.print_board(False)
+            clear()
+            table.print_board(False)
 
         # results
         for player_round in table.players:
@@ -360,8 +360,8 @@ def play(table):
                 print(str(player_round.balance))
                 continue
 
-            print('Player', player_round.name, 'looses!', str(player_round.balance), '--> ', end="")
-            table.loose(player_round)
+            print('Player', player_round.name, 'loses!', str(player_round.balance), '--> ', end="")
+            table.lose(player_round)
             print(str(player_round.balance))
 
         res = None
