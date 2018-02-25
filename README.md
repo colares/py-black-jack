@@ -24,7 +24,7 @@ or for myself, who wanted to remember my pythonic skills.
 
 ### If you're a docker person
 
-    $ docker run -it --rm --name black-jack \                                                                                    [11:18:42]
+    $ docker run -it --rm --name black-jack \
         -v "$PWD":/usr/src/myapp \
         -w /usr/src/myapp python:3 \
         python main.py
