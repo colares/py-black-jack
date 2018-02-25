@@ -188,6 +188,19 @@ class Table(object):
     def bust(self, player):
         return player.count() > 21
 
+    def is_winner(self, player): # don't like this
+        return not self.bust(player) and player.count() >= self.dealer.count()
+
+    def win(self, player):
+        self.dealer.balance -= self.bets[id(player)]
+        player.balance += self.bets[id(player)]
+
+    def loose(self, player):
+        self.dealer.balance += self.bets[id(player)]
+        player.balance -= self.bets[id(player)]
+
+
+
 
 
 
@@ -259,13 +272,15 @@ def play(table):
     :return:
     """
     while True:
-        # bets
+        # Start!
+        clear()
 
+        # bets
         table.flush_bets()
         for p in table.players:
             while True:
                 try:
-                    bet = float(input("Set your bet (max " + str(p.balance) + "):"))
+                    bet = float(input("Player " + p.name +", set your bet (max " + str(p.balance) + "):"))
                     table.bets[id(p)] = bet
                 except:
                     print("Ops! This is not a valid bet. Try it again. ")
@@ -273,12 +288,14 @@ def play(table):
                 else:
                     break
 
+        # distribute cards
         table.flush_cards()
         table.distribute_cards()
-        clear()
+
+        # todo check if the revealed card is part of a black jack candidate
         table.print_board()
         if table.black_jack(table.dealer):
-            print("dealer has black jack. hand is over")
+            print("Ops! Dealer has black jack. Thus, hand is over!")
 
             continue
 
@@ -308,6 +325,17 @@ def play(table):
 
                 if option == 1:
                     player_round.add_card(deck.get_card())
+
+        # results
+        for player_round in table.players:
+            if table.is_winner(player_round):
+                print('Player', player_round.name, 'wins!', str(player_round.balance), '--> ', end="")
+                table.win(player_round)
+                print(str(player_round.balance))
+                continue
+            print('Player', player_round.name, 'looses!', str(player_round.balance), '--> ', end="")
+            table.loose(player_round)
+            print(str(player_round.balance))
 
         res = None
         while res not in ["y","n"]:
