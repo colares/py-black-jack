@@ -214,8 +214,6 @@ class Table(object):
         pass
 
 
-
-
 def num_players_setup():
     while True:
         try:
@@ -263,6 +261,28 @@ def deck_setup():
     return deck
 
 
+def make_bets(table):
+    table.flush_bets()
+    for p in table.players:
+        while True:
+            try:
+                bet = float(input("Player " + p.name + ", set your bet (max " + str(p.balance) + "):"))
+                table.bets[id(p)] = bet
+            except:
+                print("Ops! This is not a valid bet. Try it again. ")
+                continue
+            else:
+                break
+
+
+def check_dealer_black_jack(table):
+    # todo check if the revealed card is part of a black jack candidate
+    table.print_board()
+    if table.is_black_jack(table.dealer):
+        print("Ops! Dealer has black jack. Thus, hand is over!")
+        return True
+    return False
+
 
 def play_turn(table, player):
     while True:
@@ -304,35 +324,16 @@ def play(table):
     :return:
     """
     while True:
-        # Start!
         clear()
-
-        # bets
-        table.flush_bets()
-        for p in table.players:
-            while True:
-                try:
-                    bet = float(input("Player " + p.name +", set your bet (max " + str(p.balance) + "):"))
-                    table.bets[id(p)] = bet
-                except:
-                    print("Ops! This is not a valid bet. Try it again. ")
-                    continue
-                else:
-                    break
-
-        # distribute cards
+        make_bets(table)
         table.flush_cards()
         table.distribute_cards()
+        # if check_dealer_black_jack(table):
 
-        # todo check if the revealed card is part of a black jack candidate
-        table.print_board()
-        if table.is_black_jack(table.dealer):
-            print("Ops! Dealer has black jack. Thus, hand is over!")
+        for p in table.players:
+            play_turn(table,p)
 
-            continue
-
-        for player_round in table.players:
-            play_turn(table,player_round)
+        # dealer plays
 
         # results
         for player_round in table.players:
