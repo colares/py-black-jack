@@ -102,10 +102,15 @@ class Person(object):
     def add_card(self, card):
         self.cards.append(card)
 
-    def show_cards(self):
-        for c in self.cards:
+    def show_cards(self, hide_first=False):
+        all_cards = self.cards
+        if hide_first:
+            all_cards[0] = Card('a','n',0)
+        for c in all_cards:
             print(c, end="")
-        print(self.count(), end="")
+        if not hide_first:
+            print(self.count(), end="")
+
 
     def count(self):
         res = 0
@@ -149,10 +154,6 @@ class Dealer(Person):
         # used by print(list(l))
         return "Dealer %s" % self.name
 
-    def show_cards(self,reveal=False):
-        print(self.cards[0], end="")
-        print(Card.icons['na'], end="")
-
 
 class Table(object):
     def __init__(self, deck, players):
@@ -179,7 +180,7 @@ class Table(object):
             print(p, "| Balance: ",str(p.balance).rjust(8), "| Bet", str(self.bets[id(p)]).rjust(8))
         print("--")
         print(self.dealer, end=": ")
-        self.dealer.show_cards()
+        self.dealer.show_cards(hide_first=True)
         print("")
         for p in self.players:
             print(p, end=": ")
