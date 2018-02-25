@@ -103,7 +103,7 @@ class Person(object):
         self.cards.append(card)
 
     def show_cards(self, hide_first=False):
-        all_cards = self.cards
+        all_cards = list(self.cards)
         if hide_first:
             all_cards[0] = Card('a','n',0)
         for c in all_cards:
@@ -175,12 +175,12 @@ class Table(object):
     def flush_bets(self):
         self.bets = {}
 
-    def print_board(self):
+    def print_board(self,hide_dealer=True):
         for p in self.players:
             print(p, "| Balance: ",str(p.balance).rjust(8), "| Bet", str(self.bets[id(p)]).rjust(8))
         print("--")
         print(self.dealer, end=": ")
-        self.dealer.show_cards(hide_first=True)
+        self.dealer.show_cards(hide_first=hide_dealer)
         print("")
         for p in self.players:
             print(p, end=": ")
@@ -285,10 +285,10 @@ def check_dealer_black_jack(table):
     return False
 
 
-def play_turn(table, player):
+def play_turn(table, player, hide_dealer=True):
     while True:
         clear()
-        table.print_board()
+        table.print_board(hide_dealer)
 
         if table.is_bust(player) or table.is_black_jack(player):
             break
@@ -305,6 +305,12 @@ def play_turn(table, player):
 
         if option == 1:
             player.add_card(deck.get_card())
+
+def dealer_play_turn(table):
+    while table.dealer.count() < 17:
+        clear()
+        table.print_board(False)
+        table.dealer.add_card(deck.get_card())
 
 
 def play(table):
@@ -333,9 +339,10 @@ def play(table):
 
         for p in table.players:
             play_turn(table,p)
+        dealer_play_turn(table)
 
-        # dealer plays
-
+        clear()
+        table.print_board(False)
         # results
         for player_round in table.players:
             if table.is_winner(player_round):
