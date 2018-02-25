@@ -184,7 +184,14 @@ class Table(object):
         for p in self.players:
             print(p, end=": ")
             p.show_cards()
+            if table.is_bust(p):
+                print(" --> Bust! is out")
+                continue
+            if table.is_black_jack(p):
+                print(" --> Black jack!")
+                continue
             print("")
+
 
     def is_black_jack(self, player):
         return player.count() == 21
@@ -262,13 +269,7 @@ def play_turn(table, player):
         clear()
         table.print_board()
 
-        if table.is_bust(player):
-            print(player.__class__.__name__, player.name, "bust")
-            break
-
-        if table.is_black_jack(player):
-
-            print(player.__class__.__name__, player.name, "blackjack")
+        if table.is_bust(player) or table.is_black_jack(player):
             break
 
         try:
@@ -279,11 +280,11 @@ def play_turn(table, player):
             continue
 
         if option == 2:
-            print(option, 'stand!')
             break
 
         if option == 1:
             player.add_card(deck.get_card())
+
 
 def play(table):
     """
