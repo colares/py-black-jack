@@ -182,6 +182,7 @@ class Table(object):
         print(self.dealer, end=": ")
         self.dealer.show_cards(hide_first=hide_dealer)
         print("")
+        print("Black jack pays 3 to 2")
         for p in self.players:
             print(p, end=": ")
             p.show_cards()
@@ -211,8 +212,9 @@ class Table(object):
         self.dealer.balance += self.bets[id(player)]
         player.balance -= self.bets[id(player)]
 
-    def black_jack(self):
-        pass
+    def black_jack(self,player):
+        self.dealer.balance -= self.bets[id(player)] * 3/2
+        player.balance += self.bets[id(player)] * 3/2
 
 
 def num_players_setup():
@@ -343,13 +345,21 @@ def play(table):
 
         clear()
         table.print_board(False)
+
         # results
         for player_round in table.players:
+            if table.is_black_jack(player_round):
+                print('Player', player_round.name, 'black jacks!', str(player_round.balance), '--> ', end="")
+                table.black_jack(player_round)
+                print(str(player_round.balance))
+                continue
+
             if table.is_winner(player_round):
                 print('Player', player_round.name, 'wins!', str(player_round.balance), '--> ', end="")
                 table.win(player_round)
                 print(str(player_round.balance))
                 continue
+
             print('Player', player_round.name, 'looses!', str(player_round.balance), '--> ', end="")
             table.loose(player_round)
             print(str(player_round.balance))
